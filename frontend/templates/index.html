@@ -3,9 +3,17 @@
 {% block content %}
 
 <div class="d-flex justify-content-center">
-    <div class="w-50 my-4">
-        <video id="myVidPlayer" controls muted autoplay style="transform: scaleX(-1); width: 100%"></video>
-        <div id="birthAlert" class="alert alert-success" role="alert">No cows giving birth at the moment!</div>
+    <div class="w-50">
+        <div class="d-flex justify-content-center w-100">
+            <img src="{% static 'images/logo.png' %}" alt="Logo BabyCow" style="width: 60%">
+        </div>
+        <div style="background-color: black; border: 10px solid black;">
+            <video id="myVidPlayer" controls muted autoplay style="transform: scaleX(-1); width: 100%"></video>
+            <div id="birthAlert" class="alert alert-success mb-2" role="alert">No cows giving birth at the moment!</div>
+            <button id="toggleButton" type="button" class="btn btn-primary">Start</button>
+            <button id="snapshotButton" type="button" class="btn btn-primary">Capture</button>
+            <img id="snapshotImage" style="width: 50%">
+        </div>
     </div>
 </div>
 
@@ -13,18 +21,46 @@
 <script type="text/javascript">
     //Selector for your <video> element
     const video = document.querySelector('#myVidPlayer');
-    return false;
-    //Core
-    window.navigator.mediaDevices.getUserMedia({ video: true })
+    const canvas = document.createElement('canvas'); // Create a canvas element
+    const context = canvas.getContext('2d'); // Get the 2D drawing context
+
+    // Add the canvas element to the document, but hide it initially
+    canvas.style.display = 'none';
+    document.body.appendChild(canvas);
+
+    // Function to capture a snapshot
+    function captureSnapshot() {
+        // Set the canvas dimensions to match the video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw the current frame of the video onto the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas content to a data URL (base64-encoded image)
+        const snapshotDataURL = canvas.toDataURL('image/jpeg'); // You can change the format as needed
+
+        // You can now use snapshotDataURL as the captured image data
+        // For example, you can display it in an image element or send it to a server
+        document.querySelector('#snapshotImage').src = snapshotDataURL;
+    }
+
+    // Core
+    window.navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
-            video.srcObject = stream;
-            video.onloadedmetadata = (e) => {
-                video.play();
-            };
+            $("#toggleButton").click(function() {
+                video.srcObject = stream;
+                video.onloadedmetadata = (e) => {
+                    video.play();
+                };
+            });
         })
-        .catch( () => {
-            alert('You have to give browser the permission to run Webcam and mic ;( ');
+        .catch(() => {
+            alert('You have to give the browser permission to access the webcam and microphone.');
         });
+
+    // Attach the captureSnapshot function to a button click event
+    document.querySelector('#snapshotButton').addEventListener('click', captureSnapshot);
 
 </script>
 
@@ -48,6 +84,13 @@
     // Function to generate a random boolean value
     function generateRandomBoolean() {
       return Math.random() < 0.5; // 50% chance of being true or false
+      result = {
+        "predictions": {
+            "Cow Giving Birth": {
+            "confidence": 0.963
+            }
+        }
+        }
     }
   
     // Update the birth alert every 3 seconds
@@ -55,7 +98,8 @@
       const isGivingBirth = generateRandomBoolean();
       updateBirthAlert(isGivingBirth);
     }, 1000); // 3 seconds (3000 milliseconds)
-  </script>
-  
+
+
+</script>
 
 {% endblock %}
