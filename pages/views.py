@@ -19,8 +19,8 @@ def upload_endpoint(request):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
             temp_file.write(binary_image)
             image_path = temp_file.name
-
-        return JsonResponse({'message': predict_image(image_path)})
+            giving_birth = predict_image(image_path)
+        return JsonResponse({'message': giving_birth}, status=200)
     else:
         return JsonResponse({'message': 'Snapshot upload failed'}, status=400)
 

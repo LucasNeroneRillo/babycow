@@ -24,6 +24,7 @@
     const canvas = document.createElement('canvas'); // Create a canvas element
     const context = canvas.getContext('2d'); // Get the 2D drawing context
     let snapshotDataURL;
+    let isGivingBirth;
     canvas.style.display = 'none';
     document.body.appendChild(canvas);
 
@@ -60,7 +61,7 @@
     }
 
     // Function to update the birth alert based on the isGivingBirth value
-    function updateBirthAlert(isGivingBirth) {
+    function updateBirthAlert() {
       const birthAlert = document.getElementById('birthAlert');
   
       if (isGivingBirth) {
@@ -80,25 +81,19 @@
     }
     
     // Update the birth alert every X seconds
-    //setInterval(function () {
-    //  const isGivingBirth = generateRandomBoolean();
-    //  captureSnapshot();
-    //  updateBirthAlert(isGivingBirth);
-    //  getResultFromAPI();
-    //}, 3000); // 3 seconds (3000 milliseconds)
+    /*
+    setInterval(function () {
+      captureSnapshot();
+      getResultFromAPI();
+    }, 1000); // 3 seconds (3000 milliseconds)*/
     $('#submitInfo').click(function() {
         captureSnapshot();
         getResultFromAPI();
-        let isGivingBirth = generateRandomBoolean();
-        updateBirthAlert(isGivingBirth);
     });
-    //
-    //
-    //
+    
     // Function to upload the captured image to the server
     function getResultFromAPI() {
         const formData = new FormData();
-        console.log(snapshotDataURL);
         let csrf = $('#csrf-helper input[name="csrfmiddlewaretoken"]').attr('value');
         formData.append('snapshot', snapshotDataURL);
         formData.append('csrfmiddlewaretoken', csrf);
@@ -109,19 +104,20 @@
         })
         .then(response => {
             if (response.ok) {
-                alert('Snapshot uploaded successfully.');
-                
+                return response.json();
             } else {
-                alert('Snapshot upload failed.');
+                console.log('Snapshot upload failed.');
             }
-            console.log(response);
+        })
+        .then(data => {
+            // Now you can access the 'message' property from the parsed JSON data
+            isGivingBirth = data.message;
+            updateBirthAlert();
         })
         .catch(error => {
             console.error('Error uploading snapshot:', error);
         });
     }
-
-
 </script>
 
 {% endblock %}
