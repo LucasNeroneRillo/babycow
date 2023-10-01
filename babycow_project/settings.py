@@ -26,6 +26,7 @@ SECRET_KEY = "django-insecure-t_gt!!n9^&44r366$%v)%$oa!b@xi9e#ytpvms5!yu86ifj1y!
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ['https://270a-2610-130-110-1525-14a1-71a9-fc44-c237.ngrok-free.app']
 
 # settings.py
 STATIC_URL = '/static/'
