@@ -11,41 +11,23 @@
             <video id="myVidPlayer" controls muted autoplay style="transform: scaleX(-1); width: 100%"></video>
             <div id="birthAlert" class="alert alert-success mb-2" role="alert">No cows giving birth at the moment!</div>
             <button id="toggleButton" type="button" class="btn btn-primary">Start</button>
-            <button id="snapshotButton" type="button" class="btn btn-primary">Capture</button>
+            <button id="submitInfo" type="button" class="btn btn-primary">Submit</button>
             <img id="snapshotImage" style="width: 50%">
         </div>
     </div>
 </div>
 
-<!-- Start webcam -->
-<script type="text/javascript">
+<!-- Verify cow -->
+<script>
     //Selector for your <video> element
     const video = document.querySelector('#myVidPlayer');
     const canvas = document.createElement('canvas'); // Create a canvas element
     const context = canvas.getContext('2d'); // Get the 2D drawing context
-
-    // Add the canvas element to the document, but hide it initially
+    let snapshotDataURL;
     canvas.style.display = 'none';
     document.body.appendChild(canvas);
 
-    // Function to capture a snapshot
-    function captureSnapshot() {
-        // Set the canvas dimensions to match the video
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        // Draw the current frame of the video onto the canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convert the canvas content to a data URL (base64-encoded image)
-        const snapshotDataURL = canvas.toDataURL('image/jpeg'); // You can change the format as needed
-
-        // You can now use snapshotDataURL as the captured image data
-        // For example, you can display it in an image element or send it to a server
-        document.querySelector('#snapshotImage').src = snapshotDataURL;
-    }
-
-    // Core
+    // Start video
     window.navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
             $("#toggleButton").click(function() {
@@ -59,13 +41,24 @@
             alert('You have to give the browser permission to access the webcam and microphone.');
         });
 
-    // Attach the captureSnapshot function to a button click event
-    document.querySelector('#snapshotButton').addEventListener('click', captureSnapshot);
 
-</script>
+    // Function to capture a snapshot
+    function captureSnapshot() {
+        // Set the canvas dimensions to match the video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
 
-<!-- Verify cow -->
-<script>
+        // Draw the current frame of the video onto the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas content to a data URL (base64-encoded image)
+        snapshotDataURL = canvas.toDataURL('image/jpeg'); // You can change the format as needed
+
+        // You can now use snapshotDataURL as the captured image data
+        // For example, you can display it in an image element or send it to a server
+        document.querySelector('#snapshotImage').src = snapshotDataURL;
+    }
+
     // Function to update the birth alert based on the isGivingBirth value
     function updateBirthAlert(isGivingBirth) {
       const birthAlert = document.getElementById('birthAlert');
@@ -84,20 +77,49 @@
     // Function to generate a random boolean value
     function generateRandomBoolean() {
       return Math.random() < 0.5; // 50% chance of being true or false
-      result = {
-        "predictions": {
-            "Cow Giving Birth": {
-            "confidence": 0.963
-            }
-        }
-        }
     }
-  
-    // Update the birth alert every 3 seconds
-    setInterval(function () {
-      const isGivingBirth = generateRandomBoolean();
-      updateBirthAlert(isGivingBirth);
-    }, 1000); // 3 seconds (3000 milliseconds)
+    
+    // Update the birth alert every X seconds
+    //setInterval(function () {
+    //  const isGivingBirth = generateRandomBoolean();
+    //  captureSnapshot();
+    //  updateBirthAlert(isGivingBirth);
+    //  getResultFromAPI();
+    //}, 3000); // 3 seconds (3000 milliseconds)
+    $('#submitInfo').click(function() {
+        captureSnapshot();
+        getResultFromAPI();
+        let isGivingBirth = generateRandomBoolean();
+        updateBirthAlert(isGivingBirth);
+    });
+    //
+    //
+    //
+    // Function to upload the captured image to the server
+    function getResultFromAPI() {
+        const formData = new FormData();
+        console.log(snapshotDataURL);
+        let csrf = $('#csrf-helper input[name="csrfmiddlewaretoken"]').attr('value');
+        formData.append('snapshot', snapshotDataURL);
+        formData.append('csrfmiddlewaretoken', csrf);
+        // Make a POST request to the server endpoint
+        fetch('/upload_endpoint/', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Snapshot uploaded successfully.');
+                
+            } else {
+                alert('Snapshot upload failed.');
+            }
+            console.log(response);
+        })
+        .catch(error => {
+            console.error('Error uploading snapshot:', error);
+        });
+    }
 
 
 </script>

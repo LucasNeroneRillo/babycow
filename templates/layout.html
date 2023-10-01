@@ -20,6 +20,9 @@
     {% block content %}
     {% endblock content %}
   </main>
+  <div id="csrf-helper" class="d-none">
+    {% csrf_token %}
+  </div>
   </div>
 </body>
 

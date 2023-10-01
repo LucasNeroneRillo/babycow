@@ -27,9 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-FRONTEND_BASE_DIR = BASE_DIR / "frontend"
-
-STATICFILES_DIR = FRONTEND_BASE_DIR / "static"
+# settings.py
+STATIC_URL = '/static/'
+STATICFILES_DIR = BASE_DIR / "static"
 STATICFILES_DIRS = [STATICFILES_DIR]
 # Application definition
 
@@ -58,7 +58,7 @@ ROOT_URLCONF = "babycow_project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [FRONTEND_BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
