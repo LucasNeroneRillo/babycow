@@ -2,6 +2,60 @@
 {% load static %}
 {% block content %}
 
-Hello world
+<div class="d-flex justify-content-center">
+    <div class="w-50 my-4">
+        <video id="myVidPlayer" controls muted autoplay style="transform: scaleX(-1); width: 100%"></video>
+        <div id="birthAlert" class="alert alert-success" role="alert">No cows giving birth at the moment!</div>
+    </div>
+</div>
+
+<!-- Start webcam -->
+<script type="text/javascript">
+    //Selector for your <video> element
+    const video = document.querySelector('#myVidPlayer');
+    return false;
+    //Core
+    window.navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+            video.onloadedmetadata = (e) => {
+                video.play();
+            };
+        })
+        .catch( () => {
+            alert('You have to give browser the permission to run Webcam and mic ;( ');
+        });
+
+</script>
+
+<!-- Verify cow -->
+<script>
+    // Function to update the birth alert based on the isGivingBirth value
+    function updateBirthAlert(isGivingBirth) {
+      const birthAlert = document.getElementById('birthAlert');
+  
+      if (isGivingBirth) {
+        birthAlert.classList.remove('alert-success');
+        birthAlert.classList.add('alert-danger');
+        birthAlert.textContent = 'A cow is giving birth!';
+      } else {
+        birthAlert.classList.remove('alert-danger');
+        birthAlert.classList.add('alert-success');
+        birthAlert.textContent = 'No cows giving birth at the moment!';
+      }
+    }
+  
+    // Function to generate a random boolean value
+    function generateRandomBoolean() {
+      return Math.random() < 0.5; // 50% chance of being true or false
+    }
+  
+    // Update the birth alert every 3 seconds
+    setInterval(function () {
+      const isGivingBirth = generateRandomBoolean();
+      updateBirthAlert(isGivingBirth);
+    }, 1000); // 3 seconds (3000 milliseconds)
+  </script>
+  
 
 {% endblock %}

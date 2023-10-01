@@ -17,15 +17,10 @@
 <body class="d-flex flex-column min-vh-100">
   
   <!-- Navbar -->
-  <nav class="navbar navbar-dark bg-primary sticky-top main-navbar">
+  <nav class="navbar navbar-dark bg-primary sticky-top main-navbar p-0">
     <div class="container-fluid g-0">
-      <a href="{% url 'pages:home' %}" class="navbar-brand me-0 poppins-medium my-0">
-        <div>
-          <img src="{% static 'images/logo.png' %}" alt="Logo BabyCow"
-            class="d-none d-sm-inline-block lg-logo">
-          <img src="{% static 'images/logo.png' %}" alt="Logo BabyCow"
-            class="d-inline-block d-sm-none sm-logo">
-        </div>
+      <a href="{% url 'pages:home' %}" class="navbar-brand me-0 poppins-medium my-0 py-0">
+          <img src="{% static 'images/logo.png' %}" alt="Logo BabyCow" style="height: 80px">
       </a>
     </div>
   </nav>

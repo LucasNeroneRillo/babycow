@@ -1,3 +1,4 @@
 django
-roboflow
+ngrok
 python-decouple
+roboflow

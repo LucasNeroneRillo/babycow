@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-t_gt!!n9^&44r366$%v)%$oa!b@xi9e#ytpvms5!yu86ifj1y!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 FRONTEND_BASE_DIR = BASE_DIR / "frontend"
 
