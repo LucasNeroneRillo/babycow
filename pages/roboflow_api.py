@@ -10,6 +10,5 @@ def predict_image(filename):
     result = model.predict(filename).json()
     predictions = result["predictions"][0]["predictions"]
     giving_birth = predictions["Cow Giving Birth"]["confidence"]
-    print(predictions)
     #not_giving_birth = predictions["Cow Not Giving Birth"]["confidence"]
     return giving_birth > .94
