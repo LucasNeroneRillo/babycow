@@ -11,8 +11,6 @@
             <video id="myVidPlayer" controls muted autoplay style="transform: scaleX(-1); width: 100%"></video>
             <div id="birthAlert" class="alert alert-success mb-2" role="alert">No cows giving birth at the moment!</div>
             <button id="toggleButton" type="button" class="btn btn-primary">Start</button>
-            <button id="submitInfo" type="button" class="btn btn-primary">Submit</button>
-            <img id="snapshotImage" style="width: 50%">
         </div>
     </div>
 </div>
@@ -36,12 +34,15 @@
                 video.onloadedmetadata = (e) => {
                     video.play();
                 };
-            });
+                setInterval(function () {
+                    captureSnapshot();
+                    getResultFromAPI();
+                    }, 2000); // x seconds (1000 * x milliseconds)
+                });
         })
         .catch(() => {
             alert('You have to give the browser permission to access the webcam and microphone.');
         });
-
 
     // Function to capture a snapshot
     function captureSnapshot() {
@@ -54,10 +55,6 @@
 
         // Convert the canvas content to a data URL (base64-encoded image)
         snapshotDataURL = canvas.toDataURL('image/jpeg'); // You can change the format as needed
-
-        // You can now use snapshotDataURL as the captured image data
-        // For example, you can display it in an image element or send it to a server
-        document.querySelector('#snapshotImage').src = snapshotDataURL;
     }
 
     // Function to update the birth alert based on the isGivingBirth value
@@ -74,22 +71,6 @@
         birthAlert.textContent = 'No cows giving birth at the moment!';
       }
     }
-  
-    // Function to generate a random boolean value
-    function generateRandomBoolean() {
-      return Math.random() < 0.5; // 50% chance of being true or false
-    }
-    
-    // Update the birth alert every X seconds
-    /*
-    setInterval(function () {
-      captureSnapshot();
-      getResultFromAPI();
-    }, 1000); // 3 seconds (3000 milliseconds)*/
-    $('#submitInfo').click(function() {
-        captureSnapshot();
-        getResultFromAPI();
-    });
     
     // Function to upload the captured image to the server
     function getResultFromAPI() {
@@ -110,7 +91,6 @@
             }
         })
         .then(data => {
-            // Now you can access the 'message' property from the parsed JSON data
             isGivingBirth = data.message;
             updateBirthAlert();
         })

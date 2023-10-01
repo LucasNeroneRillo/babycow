@@ -3,7 +3,7 @@ from decouple import config
 import random
 
 def predict_image(filename):
-    return True if random.getrandbits(1) == 1 else False
+    #return True if random.getrandbits(1) == 1 else False
     rf = Roboflow(api_key=config("API_KEY"))
     project = rf.workspace().project("cow-birth-monitoe-r")
     model = project.version(2).model
